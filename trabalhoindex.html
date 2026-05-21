@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SustenTab — Plataforma de Eco-Eficiência</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,300;0,400;0,700;0,900;1,300&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --water: #0ea5e9;
+            --water-dark: #0369a1;
+            --water-light: #bae6fd;
+            --energy: #f59e0b;
+            --energy-dark: #b45309;
+            --energy-light: #fde68a;
+            --green: #10b981;
+            --green-dark: #047857;
+            --bg-primary: #f0fdf4;
+            --bg-secondary: #ecfdf5;
+            --surface-dark: #0f1a0f;
+            --text-main: #1a2e1a;
+            --text-muted: #4b6b4b;
+            --card-bg: #ffffff;
+            --border-color: #bbf7d0;
+            --input-bg: #ffffff;
+            --transition-default: all 0.25s ease-in-out;
+        }
+
+        /* Dark Mode / Eco Mode Overrides */
+        [data-theme="eco"] {
+            --bg-primary: #090f09;
+            --bg-secondary: #0d170d;
+            --surface-dark: #050a05;
+            --text-main: #e2f0e2;
+            --text-muted: #85a385;
+            --card-bg: #121f12;
+            --border-color: #1b331b;
+            --input-bg: #162616;
+            --water-light: #0c4a6e;
+            --energy-light: #78350f;
+        }
+
+        *, *::before, *::after { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+
+        html { 
+            scroll-behavior: smooth; 
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.5;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            z-index: 100;
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;
+            padding: 1rem 5%;
+            background: rgba(240, 253, 244, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        [data-theme="eco"] nav {
+            background: rgba(9, 15, 9, 0.85);
+        }
+
+        .logo {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem; 
+            font-weight: 900;
+            color: var(--green-dark);
+            letter-spacing: -0.02em;
+        }
+
+        .logo span { 
+            color: var(--water); 
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-links { 
+            display: flex; 
+            gap: 1.5rem; 
+            list-style: none; 
+        }
+
+        .nav-links a {
+            font-size: 0.82rem; 
+            font-weight: 600; 
+            text-decoration: none;
+            color: var(--text-muted); 
+            transition: var(--transition-default);
+            letter-spacing: 0.05em; 
+            text-transform: uppercase;
+        }
+
+        .nav-links a:hover { 
+            color: var(--green); 
+        }
+
+        /* Eco Mode Toggle Button */
+        .toggle-eco-btn {
+            background: var(--green-dark);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 99px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: var(--transition-default);
+        }
+
+        .toggle-eco-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: flex-start;
+            padding: 8rem 10vw 4rem;
+            position: relative; 
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute; 
+            inset: 0; 
+            z-index: 0;
+            background: radial-gradient(ellipse 70% 60% at 80% 50%, #bae6fd44, transparent),
+                        radial-gradient(ellipse 50% 50% at 20% 80%, #a7f3d044, transparent),
+                        radial-gradient(ellipse 40% 40% at 60% 20%, #fde68a33, transparent);
+        }
+
+        .hero-tag {
+            font-size: 0.75rem; 
+            font-weight: 600; 
+            letter-spacing: 0.2em;
+            text-transform: uppercase; 
+            color: var(--green-dark);
+            background: #d1fae5; 
+            padding: 0.4rem 1rem; 
+            border-radius: 99px;
+            margin-bottom: 1.5rem; 
+            position: relative; 
+            z-index: 1;
+        }
+
+        [data-theme="eco"] .hero-tag {
+            background: #162616;
+            color: var(--green);
+        }
+
+        .hero h1 {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(2.5rem, 6vw, 5.5rem);
+            font-weight: 900; 
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            color: var(--text-main);
+            position: relative; 
+            z-index: 1;
+            max-width: 850px;
+        }
+
+        .hero h1 em { 
+            font-style: italic; 
+            color: var(--water-dark); 
+        }
+
+        [data-theme="eco"] .hero h1 em { color: var(--water); }
+
+        .hero h1 .accent { 
+            color: var(--green-dark); 
+        }
+        [data-theme="eco"] .hero h1 .accent { color: var(--green); }
+
+        .hero-sub {
+            font-size: 1.15rem; 
+            color: var(--text-muted); 
+            max-width: 550px;
+            line-height: 1.7; 
+            margin-top: 1.5rem; 
+            position: relative; 
+            z-index: 1;
+        }
+
+        .hero-ctas {
+            display: flex; 
+            gap: 1rem; 
+            flex-wrap: wrap;
+            margin-top: 2.5rem; 
+            position: relative; 
+            z-index: 1;
+        }
+
+        .btn {
+            display: inline-flex; 
+            align-items: center; 
+            gap: 0.5rem;
+            padding: 0.8rem 2rem; 
+            border-radius: 99px;
+            font-size: 0.9rem; 
+            font-weight: 600; 
+            text-decoration: none; 
+            cursor: pointer;
+            border: 2px solid transparent; 
+            transition: var(--transition-default);
+        }
+
+        .btn-primary {
+            background: var(--green-dark); 
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(4, 120, 87, 0.3);
+        }
+
+        .btn-primary:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 20px rgba(4, 120, 87, 0.4); 
+        }
+
+        .btn-outline {
+            background: transparent; 
+            color: var(--text-main);
+            border-color: var(--green-dark);
+        }
+
+        .btn-outline:hover { 
+            background: var(--green-dark); 
+            color: #fff; 
+        }
+
+        /* Background Blobs Animation */
+        .blob {
+            position: absolute; 
+            border-radius: 50%; 
+            filter: blur(80px); 
+            opacity: 0.2;
+            animation: float 10s ease-in-out infinite;
+        }
+        .blob1 { width: 400px; height: 400px; background: var(--water); right: 5%; top: 10%; animation-delay: 0s; }
+        .blob2 { width: 300px; height: 300px; background: var(--green); right: 20%; bottom: 15%; animation-delay: -3s; }
+        .blob3 { width: 250px; height: 250px; background: var(--energy); right: 8%; bottom: 30%; animation-delay: -6s; }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(-20px, 30px) scale(1.05); }
+            66% { transform: translate(20px, -20px) scale(0.95); }
+        }
+
+        /* Sections Layouts */
+        section { 
+            padding: 6rem 10vw; 
+        }
+
+        .section-label {
+            font-size: 0.75rem; 
+            font-weight: 700; 
+            letter-spacing: 0.2em;
+            text-transform: uppercase; 
+            color: var(--green);
+            margin-bottom: 0.8rem;
+        }
+
+        .section-title {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 700; 
+            letter-spacing: -0.02em;
+            line-height: 1.2; 
+            color: var(--text-main);
+            margin-bottom: 1rem;
+        }
+
+        .section-desc { 
+            font-size: 1rem; 
+            color: var(--text-muted); 
+            max-width: 600px; 
+            line-height: 1.7; 
+            margin-bottom: 3.5rem; 
+        }
+
+        /* Grid Cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg); 
+            border-radius: 20px;
+            padding: 2.5rem 2rem; 
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s;
+            position: relative; 
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card::before {
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            height: 4px;
+            background: var(--accent, var(--green));
+        }
+
+        .card:hover { 
+            transform: translateY(-6px); 
+            box-shadow: 0 16px 35px rgba(16, 185, 129, 0.1); 
+        }
+
+        .card-content h3 { 
+            font-family: 'Fraunces', serif; 
+            font-size: 1.25rem; 
+            font-weight: 700; 
+            margin-bottom: 0.75rem; 
+            color: var(--text-main);
+        }
+
+        .card-content p { 
+            font-size: 0.92rem; 
+            color: var(--text-muted); 
+            line-height: 1.6; 
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            width: 56px; 
+            height: 56px; 
+            border-radius: 16px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 1.6rem; 
+            margin-bottom: 1.5rem;
+            background: var(--icon-bg, #d1fae5);
+        }
+
+        [data-theme="eco"] .card-icon { background: #162616 !important; }
+
+        /* News Section Layout */
+        .news-section {
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .news-card {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: var(--transition-default);
+        }
+
+        .news-card:hover {
+            border-color: var(--green);
+            background: var(--bg-secondary);
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .news-tag {
+            color: #fff;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+        }
+        .tag-agua { background: var(--water-dark); }
+        .tag-energia { background: var(--energy-dark); }
+        .tag-clima { background: #b91c1c; }
+
+        .news-date { color: var(--text-muted); }
+        .news-card h3 { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.75rem;}
+        .news-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem; }
+        .news-link { font-size: 0.85rem; font-weight: 700; color: var(--green); text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; transition: gap 0.2s; }
+        .news-link:hover { gap: 0.5rem; }
+
+        /* Monitor de Desafios Semanais */
+        .goals-section {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .goals-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2.5rem;
+        }
+
+        .goals-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .badge-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .badge-icon { font-size: 1.5rem; filter: grayscale(100%); transition: filter 0.3s; }
+        .badge-icon.unlocked { filter: grayscale(0%); }
+
+        .goals-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .goal-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition-default);
+        }
+
+        .goal-item:hover { transform: translateX(5px); }
+
+        .goal-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--green);
+            cursor: pointer;
+        }
+
+        .goal-text { font-size: 0.95rem; font-weight: 500; }
+        .goal-item.completed .goal-text { text-decoration: line-through; color: var(--text-muted); }
+
+        /* Dynamic Tips Section */
+        .tips-section { 
+            background: var(--surface-dark); 
+            color: #fff; 
+        }
+        
+        .tips-section .section-title { color: #fff; }
+        .tips-section .section-label { color: var(--water-light); }
+        .tips-section .section-desc { color: #9ca3af; }
+
+        .tips-tabs { 
+            display: flex; 
+            gap: 0.75rem; 
+            margin-bottom: 3rem; 
+            flex-wrap: wrap; 
+        }
+
+        .tab-btn {
+            padding: 0.6rem 1.4rem; 
+            border-radius: 99px; 
+            border: 1.5px solid #374151;
+            background: transparent; 
+            color: #9ca3af; 
+            font-size: 0.85rem; 
+            font-weight: 600;
+            cursor: pointer; 
+            transition: var(--transition-default);
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            border-color: var(--water); 
+            color: var(--water-light);
+            background: rgba(14, 165, 223, 0.15);
+        }
+
+        .tips-list { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 1.25rem; 
+        }
+
+        .tip-item {
+            background: #162516; 
+            border: 1px solid #243e24; 
+            border-radius: 16px;
+            padding: 1.5rem; 
+            display: flex; 
+            gap: 1rem; 
+            align-items: flex-start;
+        }
+
+        .tip-dot {
+            width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; background: #064e3b;
+        }
+
+        .tip-text h4 { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
+        .tip-text p { font-size: 0.88rem; color: #d1fae5; line-height: 1.6; }
+
+        /* Quiz Component Styling */
+        .quiz-wrapper {
+            background: linear-gradient(135deg, #0c4a6e, #064e3b);
+            border-radius: 28px; 
+            padding: 3.5rem 3rem; 
+            color: #fff;
+            position: relative; 
+            overflow: hidden; 
+            max-width: 780px; 
+            margin: 0 auto;
+        }
+
+        .quiz-header h2 { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .quiz-header p { color: #93c5fd; font-size: 0.95rem; }
+
+        .progress-bar-outer { 
+            height: 6px; background: #1e3a5f; border-radius: 99px; margin-bottom: 2.5rem; overflow: hidden; 
+        }
+        
+        .progress-bar-inner {
+            height: 100%; background: linear-gradient(90deg, var(--water), var(--green));
+            border-radius: 99px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .quiz-question { font-size: 1.25rem; font-weight: 600; margin-bottom: 2rem; }
+        .quiz-options { display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 2rem; }
+
+        .quiz-opt {
+            background: rgba(255, 255, 255, 0.06); border: 1.5px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px; padding: 1.1rem 1.4rem; font-size: 0.95rem; color: #e0f2fe;
+            cursor: pointer; transition: var(--transition-default); text-align: left;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .quiz-opt:hover { background: rgba(14, 165, 233, 0.2); border-color: var(--water); }
+        .quiz-opt.correct { background: rgba(16, 185, 129, 0.25); border-color: var(--green); }
+        .quiz-opt.wrong { background: rgba(239, 68, 68, 0.25); border-color: #ef4444; }
+        .quiz-opt.disabled { pointer-events: none; opacity: 0.6; }
+        .quiz-opt.disabled.correct, .quiz-opt.disabled.wrong { opacity: 1; }
+
+        .quiz-feedback { 
+            min-height: 2.5rem; font-size: 0.95rem; border-radius: 12px; padding: 1rem 1.2rem; display: none; 
+        }
+        .quiz-feedback.show { display: block; }
+        .quiz-feedback.ok { background: #064e3b; color: #6ee7b7; border-left: 4px solid var(--green); }
+        .quiz-feedback.bad { background: #450a0a; color: #fca5a5; border-left: 4px solid #ef4444; }
+        
+        .quiz-score { display: none; flex-direction: column; align-items: center; text-align: center; gap: 1.2rem; }
+        .quiz-score.show { display: flex; }
+        .score-big { font-family: 'Fraunces', serif; font-size: 5.5rem; font-weight: 900; color: var(--energy-light); }
+
+        /* Calculators System & Graphics */
+        .calc-section { background: var(--bg-primary); }
+        .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-bottom: 3rem; }
+
+        .calc-panel { 
+            background: var(--bg-secondary); border-radius: 24px; padding: 2.5rem; border: 1px solid var(--border-color); 
+        }
+        .calc-panel h3 { font-family: 'Fraunces', serif; font-size: 1.35rem; margin-bottom: 2rem; }
+        .calc-field { margin-bottom: 1.2rem; }
+        .calc-field label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; }
+        
+        .calc-field input, .calc-field select {
+            width: 100%; padding: 0.8rem 1.2rem; border-radius: 12px;
+            border: 1.5px solid var(--border-color); background: var(--input-bg);
+            font-size: 1rem; color: var(--text-main); font-family: 'DM Sans', sans-serif;
+        }
+
+        .calc-result {
+            margin-top: 1.5rem; background: var(--surface-dark); color: #fff;
+            border-radius: 16px; padding: 1.5rem; display: flex; flex-direction: column; gap: 0.4rem;
+        }
+        .calc-result .res-label { font-size: 0.75rem; text-transform: uppercase; color: #9ca3af; }
+        .calc-result .res-value { font-family: 'Fraunces', serif; font-size: 2.25rem; font-weight: 900; color: var(--energy-light); }
+        
+        /* Analogias Visuais / Gráficos Comparativos */
+        .analogy-box {
+            margin-top: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            border-left: 4px solid var(--water);
+        }
+        .analogy-box.energy-box { border-left-color: var(--energy); }
+        .analogy-title { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #9ca3af; margin-bottom: 0.5rem;}
+        .analogy-items { display: flex; gap: 0.5rem; flex-wrap: wrap; font-size: 1.2rem; }
+
+        /* Nova Seção: Painel de Retorno (Payback) */
+        .payback-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 3rem;
+        }
+        .payback-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .payback-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+        .payback-badge {
+            background: var(--green-dark);
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.3rem 0.8rem;
+            border-radius: 99px;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        .payback-card h4 { font-family: 'Fraunces', serif; font-size: 1.2rem; margin-bottom: 1rem; }
+        .payback-stat { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border-color); }
+        .payback-stat span { block-size: auto; display: block; font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;}
+        .payback-stat strong { font-size: 1.6rem; color: var(--green-dark); font-family: 'Fraunces', serif; }
+
+        footer { 
+            background: var(--surface-dark); color: #9ca3af; padding: 4rem 10vw; text-align: center; border-top: 1px solid var(--border-color);
+        }
+        footer .logo { color: #d1fae5; }
+
+        .fade-up { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+        @media(max-width: 992px) { .calc-grid { grid-template-columns: 1fr; } }
+        @media(max-width: 768px) {
+            .nav-links { display: none; }
+            section { padding: 4rem 6vw; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">Susten<span>Tab</span></div>
+    <div class="nav-right">
+        <ul class="nav-links">
+            <li><a href="#sobre">Recursos</a></li>
+            <li><a href="#noticias">Notícias</a></li>
+            <li><a href="#metas">Metas</a></li>
+            <li><a href="#dicas">Dicas</a></li>
+            <li><a href="#quiz">Quiz</a></li>
+            <li><a href="#calculadora">Painel Métrico</a></li>
+        </ul>
+        <button class="toggle-eco-btn" onclick="toggleTheme()">🍃 Modo Eco: Desativado</button>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="hero-bg"></div>
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+    <div class="hero-tag">🌿 Eco-Eficiência Residencial</div>
+    <h1>Use com <em>consciência.</em><br>Preserve o <span class="accent">futuro.</span></h1>
+    <p class="hero-sub">Gerencie dados hídricos e elétricos, complete metas sustentáveis e simule impactos ambientais e financeiros reais em tempo real.</p>
+    <div class="hero-ctas">
+        <a href="#metas" class="btn btn-primary">🎯 Começar Desafio Semanal</a>
+        <a href="#calculadora" class="btn btn-outline">📊 Simular Contas e Impacto</a>
+    </div>
+</section>
+
+<!-- SEÇÃO: RECURSOS ESSENCIAIS -->
+<section id="sobre">
+    <div class="section-label">Recursos Essenciais</div>
+    <h2 class="section-title">Pilares do Monitoramento<br>e Responsabilidade</h2>
+    <p class="section-desc">Entenda os pilares matemáticos, de engenharia e ecológicos que sustentam a necessidade de conversão urgente de hábitos de consumo na esfera privada e residencial.</p>
+    <div class="cards-grid">
+        <div class="card fade-up" style="--accent:var(--water)">
+            <div class="card-content">
+                <div class="card-icon" style="--icon-bg:#e0f2fe">💧</div>
+                <h3>Gestão Hídrica Avançada</h3>
+                <p>Menos de 1% da água doce do planeta está de fato acessível para uso socioeconômico humano. Reduzir as perdas de água tratada dentro de casa minimiza o estresse das bacias hidrográficas locais e diminui o consumo dos insumos químicos complexos (como o sulfato de alumínio e o cloro) utilizados pelas companhias de saneamento nos reservatórios de distribuição urbana.</p>
+            </div>
+        </div>
+        <div class="card fade-up" style="--accent:var(--energy)">
+            <div class="card-content">
+                <div class="card-icon" style="--icon-bg:#fef3c7">⚡</div>
+                <h3>Eficiência de Matriz Elétrica</h3>
+                <p>O controle rigoroso dos picos de consumo doméstico (especialmente entre as 18h e 21h) reduz diretamente a necessidade de acionamento emergencial das usinas termelétricas fósseis na matriz energética nacional. Mitigar essa demanda evita que tarifas tarifárias adicionais sejam cobradas na conta de luz e poupa a atmosfera do despejo em massa de gases de efeito estufa.</p>
+            </div>
+        </div>
+        <div class="card fade-up" style="--accent:var(--green)">
+            <div class="card-content">
+                <div class="card-icon" style="--icon-bg:#d1fae5">🌍</div>
+                <h3>Mitigação de Pegada Ecológica</h3>
+                <p>Cada quilowatt-hora (kWh) poupado e cada litro de água conservado subtraem gramas vitais da pegada de carbono ativa da sua residência. A longo prazo, a consolidação desses pequenos hábitos de consumo combinados atua freando o esgotamento biológico acelerado da Terra, promovendo uma economia circular real a partir de aparelhos domésticos básicos.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SEÇÃO: FIQUE ATUALIZADO -->
+<section id="noticias" class="news-section">
+    <div class="section-label">Fique Atualizado</div>
+    <h2 class="section-title">Central de Impacto & Notícias</h2>
+    <p class="section-desc">Acompanhe as pautas, cenários e debates mais relevantes do ano de 2026 sobre segurança climática, transição ecológica de matrizes e as políticas nacionais de saneamento.</p>
+    <div class="news-grid">
+        <div class="news-card fade-up">
+            <div class="news-meta">
+                <span class="news-tag tag-clima">Clima Global</span>
+                <span class="news-date">Maio 2026</span>
+            </div>
+            <h3>Temperaturas Globais e o Estresse de Redes Hidrográficas</h3>
+            <p>Os principais relatórios globais de monitoramento meteorológico deste ano indicam anomalias térmicas severas. Especialistas da área ambiental alertam que o aumento do calor exige uma transição drástica nas cidades brasileiras para fontes de energia descentralizadas (como solar e eólica) e o combate imediato ao desperdício privado, evitando o colapso dos reservatórios de cabeceira.</p>
+            <a href="https://oc.eco.br/" target="_blank" rel="noopener" class="news-link">Observatório do Clima →</a>
+        </div>
+        <div class="news-card fade-up">
+            <div class="news-meta">
+                <span class="news-tag tag-agua">Gestão Urbana</span>
+                <span class="news-date">Abril 2026</span>
+            </div>
+            <h3>Telemetria Inteligente no Saneamento e Combate a Perdas</h3>
+            <p>Companhias estaduais e agências reguladoras expandem em 2026 a instalação de hidrômetros de telemetria digital em bairros populosos. A tecnologia foca em captar microvazamentos invisíveis sob o solo e em encanamentos internos residenciais. O projeto visa mitigar o alarmante índice de perda na rede de distribuição, que historicamente atinge cerca de 40% em várias capitais brasileiras.</p>
+            <a href="https://www.gov.br/ana/" target="_blank" rel="noopener" class="news-link">Dados da ANA Brasil →</a>
+        </div>
+        <div class="news-card fade-up">
+            <div class="news-meta">
+                <span class="news-tag tag-energia">Matriz Nacional</span>
+                <span class="news-date">Março 2026</span>
+            </div>
+            <h3>Novas Diretrizes de Bandeiras Tarifárias e Armazenamento</h3>
+            <p>A Aneel atualizou as métricas de acionamento preventivo de usinas térmicas devido à irregularidade das chuvas nas regiões dos principais subsistemas elétricos. O incentivo ao gerenciamento de carga pelo consumidor final ganha força, premiando residências que reduzem o uso simultâneo de ar-condicionado e chuveiro elétrico nos horários de maior sobrecarga da rede.</p>
+            <a href="https://www.gov.br/aneel/pt-br" target="_blank" rel="noopener" class="news-link">Acompanhar Bandeiras Aneel →</a>
+        </div>
+    </div>
+</section>
+
+<!-- MONITOR DE METAS SEMANAIS (COM LOCAL STORAGE) -->
+<section id="metas" class="goals-section">
+    <div class="section-label">Gamificação Ativa</div>
+    <h2 class="section-title">Monitor de Desafios Semanais</h2>
+    <p class="section-desc">Comprometa-se com hábitos sustentáveis nesta semana. Seu progresso é salvo localmente para que você não perca seu histórico.</p>
+    
+    <div class="goals-container fade-up">
+        <div class="goals-header">
+            <div>
+                <h3>Progresso de Hábitos</h3>
+                <p style="font-size: 0.9rem; color: var(--text-muted);" id="goals-progress-txt">0 de 5 hábitos concluídos</p>
+            </div>
+            <div class="badge-box">
+                <span id="badge-1" class="badge-icon">🥉</span>
+                <span id="badge-2" class="badge-icon">🥈</span>
+                <span id="badge-3" class="badge-icon">🏆</span>
+                <span style="font-size:0.8rem; font-weight:700;" id="badge-status">Iniciante</span>
+            </div>
+        </div>
+
+        <div class="progress-bar-outer" style="margin-bottom: 2rem;">
+            <div class="progress-bar-inner" id="goals-bar" style="width: 0%"></div>
+        </div>
+
+        <div class="goals-list">
+            <label class="goal-item" id="item-0">
+                <input type="checkbox" onchange="toggleGoal(0)">
+                <span class="goal-text">Reduzi o tempo de chuveiro para no máximo 5 minutos hoje.</span>
+            </label>
+            <label class="goal-item" id="item-1">
+                <input type="checkbox" onchange="toggleGoal(1)">
+                <span class="goal-text">Mantive torneiras fechadas ao escovar dentes e lavar louças.</span>
+            </label>
+            <label class="goal-item" id="item-2">
+                <input type="checkbox" onchange="toggleGoal(2)">
+                <span class="goal-text">Retirei aparelhos ociosos do modo Stand-By (desplugados da tomada).</span>
+            </label>
+            <label class="goal-item" id="item-3">
+                <input type="checkbox" onchange="toggleGoal(3)">
+                <span class="goal-text">Aproveitei a iluminação natural das janelas sem acender lâmpadas diurnas.</span>
+            </label>
+            <label class="goal-item" id="item-4">
+                <input type="checkbox" onchange="toggleGoal(4)">
+                <span class="goal-text">Acumulei roupas para usar a máquina de lavar em capacidade máxima.</span>
+            </label>
+        </div>
+    </div>
+</section>
+
+<!-- SEÇÃO: AÇÕES PRÁTICAS -->
+<section id="dicas" class="tips-section">
+    <div class="section-label">Ações Práticas</div>
+    <h2 class="section-title">Diretrizes de Preservação</h2>
+    <p class="section-desc">Aplique estes planos de ação preventivos e operacionais na rotina da sua casa para colher retornos imediatos em sustentabilidade e economia financeira.</p>
+    <div class="tips-tabs">
+        <button class="tab-btn active" data-type="agua">💧 Recursos Hídricos</button>
+        <button class="tab-btn" data-type="energia">⚡ Eficiência Energética</button>
+    </div>
+    <div id="tips-agua" class="tips-list">
+        <div class="tip-item">
+            <div class="tip-dot">🚿</div>
+            <div class="tip-text">
+                <h4>Otimização Estrutural do Banho</h4>
+                <p>Reduzir o tempo de banho de 15 para 5 minutos poupa cerca de 90 a 100 litros de água mineral tratada de uma só vez. Fechar o registro enquanto se ensaboa maximiza esse ganho.</p>
+            </div>
+        </div>
+        <div class="tip-item">
+            <div class="tip-dot">🔧</div>
+            <div class="tip-text">
+                <h4>Caça a Microvazamentos Invisíveis</h4>
+                <p>Uma torneira pingando de forma lenta desperdiça em média 46 litros de água potável por dia. Verifique os reparos de borracha e faça testes no vaso sanitário jogando pó de café.</p>
+            </div>
+        </div>
+        <div class="tip-item">
+            <div class="tip-dot">🍽️</div>
+            <div class="tip-text">
+                <h4>Mecânica de Lavagem de Louças</h4>
+                <p>Lavar a louça com a torneira aberta ininterruptamente por 15 minutos gasta até 117 litros. Ensaboe todas as peças de uma vez com a água fechada e abra apenas para o enxágue coletivo.</p>
+            </div>
+        </div>
+    </div>
+    <div id="tips-energia" class="tips-list" style="display:none">
+        <div class="tip-item">
+            <div class="tip-dot">🌡️</div>
+            <div class="tip-text">
+                <h4>Climatização Consciente com Ar</h4>
+                <p>Fixe o termostato do ar-condicionado na temperatura ideal de 23°C. Configurações mais baixas forçam o compressor a operar continuamente em potência máxima, elevando o consumo em até 20% por grau reduzido.</p>
+            </div>
+        </div>
+        <div class="tip-item">
+            <div class="tip-dot">💡</div>
+            <div class="tip-text">
+                <h4>Modernização para Luminárias LED</h4>
+                <p>Substituir lâmpadas antigas por tecnologia LED reduz o consumo elétrico de iluminação em até 80%. Além disso, os LEDs possuem maior durabilidade operacional e não geram calor residual no ambiente.</p>
+            </div>
+        </div>
+        <div class="tip-item">
+            <div class="tip-dot">🔌</div>
+            <div class="tip-text">
+                <h4>Combate ao Consumo Fantasma</h4>
+                <p>Aparelhos mantidos permanentemente em modo de espera (stand-by), com pequenas luzes acesas, representam até 12% do valor total da fatura elétrica de uma casa. Utilize filtros de linha com chave liga/desliga.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SEÇÃO QUIZ COM TODAS AS PERGUNTAS -->
+<section id="quiz">
+    <div class="section-label">Conhecimento</div>
+    <h2 class="section-title">Quiz Interativo</h2>
+    <div class="quiz-wrapper fade-up">
+        <div class="quiz-header">
+            <h2>🌿 Desafio Verde</h2>
+            <p id="quiz-progress-text">Pergunta 1</p>
+        </div>
+        <div class="progress-bar-outer">
+            <div class="progress-bar-inner" id="quiz-bar" style="width:0%"></div>
+        </div>
+        <div id="quiz-body">
+            <div class="quiz-question" id="q-text">Carregando questionário...</div>
+            <div class="quiz-options" id="q-options"></div>
+            <div class="quiz-feedback" id="q-feedback"></div>
+            <div class="quiz-nav">
+                <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()" style="display:none">Próxima →</button>
+            </div>
+        </div>
+        <div class="quiz-score" id="quiz-score">
+            <div class="score-big" id="score-num">0/0</div>
+            <div class="score-msg" id="score-msg"></div>
+            <button class="btn btn-primary" onclick="restartQuiz()">🔄 Refazer Teste</button>
+        </div>
+    </div>
+</section>
+
+<!-- SEÇÃO CALCULADORA COM GRÁFICOS E BANDEIRAS -->
+<section id="calculadora" class="calc-section">
+    <div class="section-label">Painel Métrico</div>
+    <h2 class="section-title">Calculadora de Impacto & Tarifas</h2>
+    <p class="section-desc">Entre com dados de rotina para projetar despesas monetárias e avaliar as analogias da sua pegada ecológica.</p>
+
+    <div class="calc-grid">
+        <!-- HÍDRICA -->
+        <div class="calc-panel fade-up">
+            <h3>💧 Consumo de Água</h3>
+            <div class="calc-field">
+                <label>Banhos diários (Total da casa)</label>
+                <input type="number" id="w-banhos" value="3" oninput="calcAll()">
+            </div>
+            <div class="calc-field">
+                <label>Duração média do banho (Minutos)</label>
+                <input type="number" id="w-duracao" value="10" oninput="calcAll()">
+            </div>
+            <div class="calc-field">
+                <label>Ciclos semanais de máquina de lavar</label>
+                <input type="number" id="w-lavagens" value="3" oninput="calcAll()">
+            </div>
+            <div class="calc-result">
+                <div class="res-label">Volume Mensal Projetado</div>
+                <div class="res-value" id="w-result">0 L</div>
+            </div>
+            <div class="analogy-box">
+                <div class="analogy-title">Equivalência Física Mensal</div>
+                <div id="analogy-water-text" style="font-size:0.9rem; margin-bottom:0.4rem;">Projetando impacto...</div>
+                <div class="analogy-items" id="analogy-water-icons"></div>
+            </div>
+        </div>
+
+        <!-- ENERGÉTICA COM BANDEIRAS -->
+        <div class="calc-panel fade-up">
+            <h3>⚡ Consumo Elétrico & Custo</h3>
+            <div class="calc-field">
+                <label>Uso de Ar-Condicionado (Horas/Dia)</label>
+                <input type="number" id="e-ar" value="4" oninput="calcAll()">
+            </div>
+            <div class="calc-field">
+                <label>Chuveiro elétrico ligado (Minutos/Dia total)</label>
+                <input type="number" id="e-chuveiro" value="20" oninput="calcAll()">
+            </div>
+            <div class="calc-field">
+                <label>Bandeira Tarifária Vigente (Aneel)</label>
+                <select id="e-bandeira" onchange="calcAll()">
+                    <option value="0.00">Bandeira Verde (Sem acréscimo)</option>
+                    <option value="0.0134">Bandeira Amarela (+ R$ 0,0134 por kWh)</option>
+                    <option value="0.0446">Bandeira Vermelha Patamar 1 (+ R$ 0,0446 por kWh)</option>
+                    <option value="0.0787">Bandeira Vermelha Patamar 2 (+ R$ 0,0787 por kWh)</option>
+                </select>
+            </div>
+            <div class="calc-result">
+                <div class="res-label">Consumo & Custo Estimado Fatura</div>
+                <div class="res-value" id="e-result">0 kWh</div>
+                <div style="font-size:1.3rem; color:var(--green); font-weight:700;" id="e-cash">R$ 0,00</div>
+            </div>
+            <div class="analogy-box energy-box">
+                <div class="analogy-title">Impacto Atmosférico Relacionado</div>
+                <div id="analogy-energy-text" style="font-size:0.9rem; margin-bottom:0.4rem;">Avaliando dados carbônicos...</div>
+                <div class="analogy-items" id="analogy-energy-icons"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOVA SUBSEÇÃO INTERNA: CALCULADORA DE RETORNO FINANCEIRO (PAYBACK) -->
+    <div class="payback-container fade-up">
+        <h3 style="font-family:'Fraunces', serif; font-size:1.6rem; margin-bottom:0.5rem;">💵 Simulador de Payback Técnico</h3>
+        <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:1.5rem;">Calcule o tempo necessário para que investimentos em eficiência tecnológica se paguem através da economia gerada na sua própria fatura.</p>
+        
+        <div class="payback-grid">
+            <!-- Caso 1: Lâmpadas LED -->
+            <div class="payback-card">
+                <span class="payback-badge">Luminotécnica</span>
+                <h4>Substituição por Lâmpadas LED</h4>
+                <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1rem;">Troca de 10 lâmpadas incandescentes/fluorescentes antigas de uso frequente por modelos LED modernos.</p>
+                <div class="calc-field">
+                    <label>Custo Médio do Investimento (R$)</label>
+                    <input type="number" id="p-led-cost" value="120" oninput="calcPayback()">
+                </div>
+                <div class="payback-stat">
+                    <span>Retorno Estimado (Amortização)</span>
+                    <strong id="p-led-res">0 meses</strong>
+                </div>
+            </div>
+
+            <!-- Caso 2: Painéis Solares -->
+            <div class="payback-card">
+                <span class="payback-badge">Geração Distribuída</span>
+                <h4>Instalação de Sistema Solar Mini</h4>
+                <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1rem;">Implantação de um kit básico de microgeração fotovoltaica residencial para abatimento de carga base.</p>
+                <div class="calc-field">
+                    <label>Valor Total do Projeto Solar (R$)</label>
+                    <input type="number" id="p-solar-cost" value="8500" oninput="calcPayback()">
+                </div>
+                <div class="payback-stat">
+                    <span>Retorno Estimado (Amortização)</span>
+                    <strong id="p-solar-res">0 anos</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <span class="logo">SustenTab</span>
+    <p style="margin-top:0.5rem">Plataforma Educacional Integrada focada em Eficiência Hídrica e Elétrica — 2026. 🌿</p>
+</footer>
+
+<script>
+    // THEME CONTROLLER (ECO MODE / DARK MODE)
+    function toggleTheme() {
+        const body = document.documentElement;
+        const currentTheme = body.getAttribute('data-theme');
+        const btn = document.querySelector('.toggle-eco-btn');
+        
+        if(currentTheme === 'eco') {
+            body.removeAttribute('data-theme');
+            btn.textContent = "🍃 Modo Eco: Desativado";
+        } else {
+            body.setAttribute('data-theme', 'eco');
+            btn.textContent = "🍃 Modo Eco: Ativo";
+        }
+    }
+
+    // MONITOR DE METAS COM PERSISTÊNCIA (LOCAL STORAGE)
+    let completedGoals = [false, false, false, false, false];
+
+    function toggleGoal(index) {
+        const item = document.getElementById(`item-${index}`);
+        completedGoals[index] = !completedGoals[index];
+        
+        if(completedGoals[index]) item.classList.add('completed');
+        else item.classList.remove('completed');
+
+        // Salvamento imediato no ecossistema do navegador
+        localStorage.setItem('sustentab_goals', JSON.stringify(completedGoals));
+
+        atualizarInterfaceMetas();
+    }
+
+    function atualizarInterfaceMetas() {
+        const totalCompleted = completedGoals.filter(Boolean).length;
+        const pct = (totalCompleted / completedGoals.length) * 100;
+        
+        document.getElementById('goals-bar').style.width = `${pct}%`;
+        document.getElementById('goals-progress-txt').textContent = `${totalCompleted} de ${completedGoals.length} hábitos concluídos`;
+
+        // Medal Controller
+        const m1 = document.getElementById('badge-1');
+        const m2 = document.getElementById('badge-2');
+        const m3 = document.getElementById('badge-3');
+        const status = document.getElementById('badge-status');
+
+        m1.classList.remove('unlocked'); m2.classList.remove('unlocked'); m3.classList.remove('unlocked');
+
+        if(totalCompleted >= 1) m1.classList.add('unlocked');
+        if(totalCompleted >= 3) m2.classList.add('unlocked');
+        if(totalCompleted === 5) m3.classList.add('unlocked');
+
+        if(totalCompleted === 0) status.textContent = "Iniciante";
+        else if(totalCompleted < 3) status.textContent = "Bronze Eco";
+        else if(totalCompleted < 5) status.textContent = "Prata Pro";
+        else status.textContent = "Guardião da Terra 🏆";
+    }
+
+    // METRICS AND ANALOGIES CALCULATOR
+    let currentGlobalKwh = 150; // Cache dinâmico para retroalimentar o payback
+
+    function calcAll() {
+        // Água
+        const banhos = Number(document.getElementById('w-banhos').value) || 0;
+        const duracao = Number(document.getElementById('w-duracao').value) || 0;
+        const lavagens = Number(document.getElementById('w-lavagens').value) || 0;
+
+        const banhoVol = banhos * duracao * 10 * 30; 
+        const lavagemVol = lavagens * 150 * 4; 
+        const totalWater = banhoVol + lavagemVol;
+
+        document.getElementById('w-result').textContent = `${totalWater.toLocaleString('pt-BR')} L`;
+
+        const waterIcons = document.getElementById('analogy-water-icons');
+        const waterText = document.getElementById('analogy-water-text');
+        waterIcons.innerHTML = '';
+        
+        let numIcons = Math.min(15, Math.max(1, Math.ceil(totalWater / 500)));
+        waterText.textContent = `Seu volume mensal acumulado preencheria o equivalente visual a ${(totalWater / 20).toLocaleString('pt-BR')} galões tradicionais de 20 litros.`;
+        for(let i=0; i<numIcons; i++) { waterIcons.innerHTML += '💧'; }
+
+        // Energia e Finanças
+        const ar = Number(document.getElementById('e-ar').value) || 0;
+        const chuveiro = Number(document.getElementById('e-chuveiro').value) || 0;
+        const bandeiraAdicional = parseFloat(document.getElementById('e-bandeira').value);
+
+        const kwhAr = ar * 1.5 * 30;
+        const kwhChuveiro = (chuveiro / 60) * 5.5 * 30;
+        currentGlobalKwh = Math.round(kwhAr + kwhChuveiro);
+
+        document.getElementById('e-result').textContent = `${currentGlobalKwh.toLocaleString('pt-BR')} kWh`;
+
+        const tarifaBase = 0.75;
+        const custoTotal = currentGlobalKwh * (tarifaBase + bandeiraAdicional);
+        document.getElementById('e-cash').textContent = custoTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        const energyIcons = document.getElementById('analogy-energy-icons');
+        const energyText = document.getElementById('analogy-energy-text');
+        energyIcons.innerHTML = '';
+        
+        let arvores = Math.max(1, Math.ceil(currentGlobalKwh * 0.05));
+        energyText.textContent = `São necessárias ${arvores} árvore(s) crescendo por um ano para mitigar a geração carbônica desse consumo de luz.`;
+        for(let i=0; i<Math.min(15, arvores); i++) { energyIcons.innerHTML += '🌳'; }
+
+        // Atualiza os cálculos de payback dependentes da tarifa
+        calcPayback();
+    }
+
+    // LÓGICA DE CÁLCULO DE RETORNO (PAYBACK SIMULADO)
+    function calcPayback() {
+        const costLed = Number(document.getElementById('p-led-cost').value) || 0;
+        const costSolar = Number(document.getElementById('p-solar-cost').value) || 0;
+        
+        const bandeiraAdicional = parseFloat(document.getElementById('e-bandeira').value);
+        const tarifaVigente = 0.75 + bandeiraAdicional;
+
+        // Caso LED: Economia estimada média de 45 kWh/mês ao remover cargas incandescentes
+        const economiaMensalLed = 45 * tarifaVigente;
+        const mesesLed = economiaMensalLed > 0 ? (costLed / economiaMensalLed) : 0;
+        document.getElementById('p-led-res').textContent = mesesLed > 0 ? `${Math.ceil(mesesLed)} meses` : 'Incalculável';
+
+        // Caso Solar: Mitigação projetada de até 75% da fatura gerada na calculadora com base nos dados imputados
+        const economiaMensalSolar = (currentGlobalKwh * tarifaVigente) * 0.75;
+        const mesesSolar = economiaMensalSolar > 0 ? (costSolar / economiaMensalSolar) : 0;
+        const anosSolar = mesesSolar / 12;
+        document.getElementById('p-solar-res').textContent = anosSolar > 0 ? `${anosSolar.toFixed(1)} anos` : 'Incalculável';
+    }
+
+    // BANCO COMPLETO DE PERGUNTAS DO QUIZ
+    const questions = [
+        { q: "Quantos litros consome um banho corrido convencional de 10 minutos?", opts: ["Aproximadamente 30L", "Aproximadamente 100L", "Aproximadamente 250L"], ans: 1 },
+        { q: "Qual o vilão elétrico de consumo térmico residencial brasileiro?", opts: ["Geladeira Frost-Free", "Chuveiro Elétrico", "Televisores e Receptores"], ans: 1 },
+        { q: "Deixar carregadores de celular na tomada sem o aparelho consome energia?", opts: ["Não, o circuito só fecha se houver o telefone", "Sim, gera o chamado consumo fantasma (stand-by)", "Apenas se a tomada for antiga"], ans: 1 },
+        { q: "Qual o principal benefício ambiental de utilizar a máquina de lavar em capacidade máxima?", opts: ["Otimizar o sabão em pó", "Economizar água e energia por kg de roupa lavada", "Evitar o desgaste do motor"], ans: 1 },
+        { q: "Em telas com tecnologia OLED ou AMOLED, qual o benefício prático do Modo Escuro?", opts: ["Apenas conforto visual", "Nenhum benefício de hardware", "Redução de consumo de energia, pois pixels pretos ficam desligados"], ans: 2 }
+    ];
+    let current = 0, score = 0, answered = false;
+
+    function renderQuestion() {
+        const q = questions[current];
+        document.getElementById('q-text').textContent = q.q;
+        document.getElementById('quiz-progress-text').textContent = `Pergunta ${current+1} de ${questions.length}`;
+        document.getElementById('quiz-bar').style.width = `${((current+1)/questions.length)*100}%`;
+        document.getElementById('q-feedback').className = 'quiz-feedback';
+        document.getElementById('q-feedback').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+        answered = false;
+
+        const opts = document.getElementById('q-options');
+        opts.innerHTML = '';
+        q.opts.forEach((o, i) => {
+            const b = document.createElement('button');
+            b.className = 'quiz-opt'; b.textContent = o;
+            b.onclick = () => selectAnswer(i);
+            opts.appendChild(b);
+        });
+    }
+
+    function selectAnswer(i) {
+        if(answered) return; answered = true;
+        const q = questions[current];
+        const btns = document.querySelectorAll('.quiz-opt');
+        btns.forEach(b => b.classList.add('disabled'));
+        const fb = document.getElementById('q-feedback');
+
+        if(i === q.ans) {
+            btns[i].classList.add('correct'); score++;
+            fb.textContent = "✅ Excelente! Domínio e assertividade sobre o consumo.";
+            fb.className = "quiz-feedback show ok";
+        } else {
+            btns[i].classList.add('wrong'); btns[q.ans].classList.add('correct');
+            fb.textContent = "❌ Incorreto. Aprenda com as métricas do painel.";
+            fb.className = "quiz-feedback show bad";
+        }
+        document.getElementById('next-btn').style.display = 'inline-flex';
+    }
+
+    function nextQuestion() {
+        current++;
+        if(current >= questions.length) {
+            document.getElementById('quiz-body').style.display = 'none';
+            document.getElementById('quiz-score').classList.add('show');
+            document.getElementById('score-num').textContent = `${score}/${questions.length}`;
+            document.getElementById('score-msg').textContent = score === questions.length ? "Você tem hábitos estruturais exemplares! Um verdadeiro protetor ecológico." : "Muito bom! Continue revisando as dicas ecológicas para pontuar mais.";
+        } else { renderQuestion(); }
+    }
+
+    function restartQuiz() {
+        current = 0; score = 0;
+        document.getElementById('quiz-body').style.display = 'block';
+        document.getElementById('quiz-score').classList.remove('show');
+        renderQuestion();
+    }
+
+    // TABS MANAGEMENT
+    document.querySelectorAll('.tab-btn').forEach(b => {
+        b.addEventListener('click', (e) => {
+            document.querySelectorAll('.tips-list').forEach(l => l.style.display = 'none');
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            const type = e.target.getAttribute('data-type');
+            document.getElementById(`tips-${type}`).style.display = 'grid';
+            e.target.classList.add('active');
+        });
+    });
+
+    // SCROLL ANIMATION OBSERVER
+    const obs = new IntersectionObserver(es => { es.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }); });
+    document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+    // STARTUP SYSTEM LOAD
+    window.onload = () => {
+        // Recuperar dados de Metas do Local Storage
+        const salvas = localStorage.getItem('sustentab_goals');
+        if(salvas) {
+            completedGoals = JSON.parse(salvas);
+            completedGoals.forEach((status, idx) => {
+                const item = document.getElementById(`item-${idx}`);
+                if(item) {
+                    item.querySelector('input').checked = status;
+                    if(status) item.classList.add('completed');
+                }
+            });
+            atualizarInterfaceMetas();
+        }
+
+        renderQuestion(); 
+        calcAll(); 
+    };
+</script>
+</body>
+</html>
